@@ -87,7 +87,7 @@ def filter_3d_by_range_and_azimuth(hostname: str,
     ax.set_ylim3d([-r, r])
     ax.set_zlim3d([-r, r])
 
-    plt.title("Filtered 3D Points from {}".format(hostname))
+    plt.title(f"Filtered 3D Points from {hostname}")
 
     metadata, sample = client.Scans.sample(hostname, 2, lidar_port)
     scan = next(sample)[1]
@@ -172,7 +172,7 @@ def plot_range_image(hostname: str, lidar_port: int = 7502) -> None:
     plt.imshow(client.destagger(metadata, range), resample=False)
 
     # configure and show plot
-    plt.title("Range Data from {}".format(hostname))
+    plt.title(f"Range Data from {hostname}")
     plt.axis('off')
     plt.show()
 
@@ -200,12 +200,12 @@ def plot_all_channels(hostname: str,
                               sharey=True,
                               figsize=(12.0, n_scans * .75),
                               tight_layout=True)
-    fig.suptitle("{} consecutive scans from {}".format(n_scans, hostname))
+    fig.suptitle(f"{n_scans} consecutive scans from {hostname}")
     fig.canvas.set_window_title("example: display_all_2D")
 
     # set row and column titles of subplots
     column_titles = ["range", "reflectivity", "near_ir", "signal"]
-    row_titles = ["Scan {}".format(i) for i in list(range(n_scans))]
+    row_titles = [f"Scan {i}" for i in list(range(n_scans))]
     for ax, column_title in zip(axarr[0], column_titles):
         ax.set_title(column_title)
     for ax, row_title in zip(axarr[:, 0], row_titles):
@@ -252,7 +252,7 @@ def plot_xyz_points(hostname: str, lidar_port: int = 7502) -> None:
     ax.set_ylim3d([-r, r])
     ax.set_zlim3d([-r, r])
 
-    plt.title("3D Points from {}".format(hostname))
+    plt.title(f"3D Points from {hostname}")
 
     # [doc-stag-plot-xyz-points]
     # transform data to 3d points and graph
@@ -283,8 +283,8 @@ def write_xyz_to_csv(hostname: str,
     xyzlut = client.XYZLut(metadata)
 
     for count, scan in enumerate(next(sample)):
-        out_name = "{}_{}.txt".format(cloud_prefix, count)
-        print("writing {}..".format(out_name))
+        out_name = f"{cloud_prefix}_{count}.txt"
+        print(f"writing {out_name}..")
         np.savetxt(out_name, xyzlut(scan).reshape(h * w, 3), delimiter=" ")
 
 
@@ -313,7 +313,7 @@ def plot_imu_z_accel(hostname: str,
     ax.plot(ts, z_accel)
     # [doc-etag-imu-z-accel]
 
-    plt.title("Z Accel from IMU over {} Seconds".format(n_seconds))
+    plt.title(f"Z Accel from IMU over {n_seconds} Seconds")
     ax.set_xticks(np.arange(min(ts), max(ts), step=((max(ts) - min(ts)) / 5)))
     # add end ticker to x axis
     ax.set_xticks(list(ax.get_xticks()) + [max(ts)])

@@ -30,17 +30,15 @@ def write_test_pcap(test_file,
     frag_size = min(frag_size, total_size)
     frags = max(int(total_size / frag_size), 1)
     result = []
-    for i in range(0, total_complete_packets):
+    for i in range(total_complete_packets):
         data_out = []
-        for j in range(0, frags):
-            data_out.append(i)
-            data_out.append(j)
-            for k in range(0, (frag_size - 2)):
-                data_out.append(k % 255)
+        for j in range(frags):
+            data_out.extend((i, j))
+            data_out.extend(k % 255 for k in range(frag_size - 2))
         _pcap.record_packet(record, port, dst_port, bytearray(data_out))
 
         result.extend(data_out)
-        result.extend([0 for x in range(len(result), (i + 1) * total_size)])
+        result.extend([0 for _ in range(len(result), (i + 1) * total_size)])
 
     return (bytearray(result), record)
 

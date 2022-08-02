@@ -141,7 +141,7 @@ def pcap_2d_viewer(
         num = 0
         scan = next(scans, None)
         while scan:
-            print("frame id: {}, num = {}".format(scan.frame_id, num))
+            print(f"frame id: {scan.frame_id}, num = {num}")
 
             fields_values = [scan.field(ch) for ch in channels]
 
@@ -162,13 +162,11 @@ def pcap_2d_viewer(
             # 100 is d
             if key == 100:
                 destagger = not destagger
-            # 32 is SPACE
-            if key == 32:
-                paused = not paused
-            # 27 is ESC
             elif key == 27:
                 break
 
+            elif key == 32:
+                paused = not paused
             if not paused:
                 scan = next(scans, None)
                 num += 1
@@ -229,9 +227,7 @@ def pcap_show_one_scan(pcap_path: str,
 
     def prepare_field_image(scan, key, metadata, destagger=True):
         f = ae(scan.field(key))
-        if destagger:
-            return client.destagger(metadata, f)
-        return f
+        return client.destagger(metadata, f) if destagger else f
 
     show_fields = [('range', client.ChanField.RANGE),
                    ('signal', client.ChanField.SIGNAL),

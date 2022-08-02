@@ -156,7 +156,7 @@ def test_write_config() -> None:
 
 @pytest.fixture()
 def complete_config_string() -> str:
-    complete_config_string = """
+    return """
         {"azimuth_window": [0, 360000],
         "lidar_mode": "1024x10",
         "multipurpose_io_mode": "OFF",
@@ -176,7 +176,6 @@ def complete_config_string() -> str:
         "udp_dest": "",
         "udp_port_imu": 7503,
         "udp_port_lidar": 7502}"""
-    return complete_config_string
 
 
 def test_read_config(complete_config_string: str) -> None:

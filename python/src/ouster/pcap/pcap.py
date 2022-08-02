@@ -154,10 +154,10 @@ class Pcap(PacketSource):
                 time.sleep(delta)
 
             if packet_info.dst_port == self._lidar_port and n != 0:
-                yield LidarPacket(buf[0:n], self._metadata)
+                yield LidarPacket(buf[:n], self._metadata)
 
             elif packet_info.dst_port == self._imu_port and n != 0:
-                yield ImuPacket(buf[0:n], self._metadata)
+                yield ImuPacket(buf[:n], self._metadata)
 
     @property
     def metadata(self) -> SensorInfo:

@@ -205,12 +205,11 @@ class LidarScan:
             if win_start < win_end:
                 return (self.header(ColHeader.STATUS)[win_start:win_end +
                                                       1] == 0xFFFFFFFF).all()
-            else:
-                valid = (self.header(
-                    ColHeader.STATUS)[win_start:] == 0xFFFFFFFF).all()
-                valid = valid and (self.header(ColHeader.STATUS)[:win_end + 1]
-                                   == 0xFFFFFFFF).all()
-                return valid
+            valid = (self.header(
+                ColHeader.STATUS)[win_start:] == 0xFFFFFFFF).all()
+            valid = valid and (self.header(ColHeader.STATUS)[:win_end + 1]
+                               == 0xFFFFFFFF).all()
+            return valid
         return (self.header(ColHeader.STATUS) == 0xFFFFFFFF).all()
 
     def field(self, field: ChanField) -> np.ndarray:

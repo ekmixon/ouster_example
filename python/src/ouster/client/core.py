@@ -146,8 +146,8 @@ class Sensor(PacketSource):
     def _fetch_metadata(self) -> None:
         if not self._fetched_meta:
             self._fetched_meta = self._cli.get_metadata()
-            if not self._fetched_meta:
-                raise ClientError("Failed to collect metadata")
+        if not self._fetched_meta:
+            raise ClientError("Failed to collect metadata")
 
     def write_metadata(self, path: str) -> None:
         """Save metadata to disk.
@@ -340,24 +340,23 @@ class Scans:
                                               start_ts + self._timeout):
                 raise ClientTimeout(f"No lidar scans within {self._timeout}s")
 
-            if isinstance(packet, LidarPacket):
-                if batch(packet._data, ls_write):
-                    # Got a new frame, return it and start another
-                    ls = LidarScan.from_native(ls_write)
-                    if not self._complete or ls._complete(column_window):
-                        yield ls
-                        start_ts = time.monotonic()
-                    ls_write = _client.LidarScan(w, h)
+            if isinstance(packet, LidarPacket) and batch(packet._data, ls_write):
+                # Got a new frame, return it and start another
+                ls = LidarScan.from_native(ls_write)
+                if not self._complete or ls._complete(column_window):
+                    yield ls
+                    start_ts = time.monotonic()
+                ls_write = _client.LidarScan(w, h)
 
-                    # Drop data along frame boundaries to maintain _max_latency and
-                    # clear out already-batched first packet of next frame
-                    if self._max_latency and sensor is not None:
-                        buf_frames = sensor.buf_use() // packets_per_frame
-                        drop_frames = buf_frames - self._max_latency + 1
+                # Drop data along frame boundaries to maintain _max_latency and
+                # clear out already-batched first packet of next frame
+                if self._max_latency and sensor is not None:
+                    buf_frames = sensor.buf_use() // packets_per_frame
+                    drop_frames = buf_frames - self._max_latency + 1
 
-                        if drop_frames > 0:
-                            sensor.flush(drop_frames)
-                            batch = _client.ScanBatcher(w, pf)
+                    if drop_frames > 0:
+                        sensor.flush(drop_frames)
+                        batch = _client.ScanBatcher(w, pf)
 
     def close(self) -> None:
         """Close the underlying PacketSource."""

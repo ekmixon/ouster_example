@@ -69,17 +69,15 @@ class ScanDigest:
 
     @classmethod
     def from_packet(cls, p: LidarPacket) -> 'ScanDigest':
-        hashes = {}
-        hashes.update({c.name: _md5(p.field(c)) for c in ChanField})
-        hashes.update({h.name: _md5(p.header(h)) for h in ColHeader})
+        hashes = {c.name: _md5(p.field(c)) for c in ChanField} | {
+            h.name: _md5(p.header(h)) for h in ColHeader
+        }
 
         return cls(**hashes)
 
     @classmethod
     def from_scan(cls, ls: LidarScan) -> 'ScanDigest':
-        hashes = {}
-        hashes.update({c.name: _md5(ls.field(c)) for c in ChanField})
-
+        hashes = {} | {c.name: _md5(ls.field(c)) for c in ChanField}
         hashes['TIMESTAMP'] = _md5(
             ls.header(ColHeader.TIMESTAMP).astype(np.uint64))
         hashes['ENCODER_COUNT'] = _md5(
